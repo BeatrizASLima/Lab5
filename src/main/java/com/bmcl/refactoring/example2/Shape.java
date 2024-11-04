@@ -1,63 +1,68 @@
 package com.bmcl.refactoring.example2;
 
-public class Shape {
-    enum TYPE {RECTANGLE, CIRCLE}
+abstract class Shape {
+    protected double x;
+    protected double y;
 
-    private TYPE type;
-    private double x;
-    private double y;
-    private double width;  // ONLY FOR RECTANGLES
-    private double height; // ONLY FOR RECTANGLES
-    private double radius; // ONLY FOR CIRCLES
-
-    public Shape(double x, double y, double width, double height) {
-        this.type = TYPE.RECTANGLE;
+    public Shape(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    public abstract double getArea();
+    public abstract double getPerimeter();
+    public abstract void draw(GraphicFramework graphics);
+}
+
+class Rectangle extends Shape {
+    private double width;
+    private double height;
+
+    public Rectangle(double x, double y, double width, double height) {
+        super(x, y);
         this.width = width;
         this.height = height;
     }
 
-    public Shape(double x, double y, double radius) {
-        this.type = TYPE.CIRCLE;
-        this.x = x;
-        this.y = y;
+    @Override
+    public double getArea() {
+        return width * height;
+    }
+
+    @Override
+    public double getPerimeter() {
+        return 2 * (width + height);
+    }
+
+    @Override
+    public void draw(GraphicFramework graphics) {
+        graphics.drawLine(x, y, x + width, y);
+        graphics.drawLine(x + width, y, x + width, y + height);
+        graphics.drawLine(x + width, y + height, x, y + height);
+        graphics.drawLine(x, y + height, x, y);
+    }
+}
+
+class Circle extends Shape {
+    private double radius;
+
+    public Circle(double x, double y, double radius) {
+        super(x, y);
         this.radius = radius;
     }
 
-    public double getArea() throws Exception {
-        switch (type) {
-            case RECTANGLE:
-                return width * height;
-            case CIRCLE:
-                return Math.PI * Math.pow(radius, 2);
-            default:
-                throw new Exception("Shape with no type");
-        }
+    @Override
+    public double getArea() {
+        return Math.PI * Math.pow(radius, 2);
     }
 
-    public double getPerimeter() throws Exception {
-        switch (type) {
-            case RECTANGLE:
-                return 2 * (width + height);
-            case CIRCLE:
-                return 2 * Math.PI * radius;
-            default:
-                throw new Exception("Shape with no type");
-        }
+    @Override
+    public double getPerimeter() {
+        return 2 * Math.PI * radius;
     }
 
+    @Override
     public void draw(GraphicFramework graphics) {
-        switch (type) {
-            case RECTANGLE:
-                graphics.drawLine(x, y, x + width, y);
-                graphics.drawLine(x + width, y, x + width, y + height);
-                graphics.drawLine(x + width, y + height, x, y + height);
-                graphics.drawLine(x, y + height, x, y);
-                break;
-            case CIRCLE:
-                graphics.drawCircle(x, y, radius);
-                break;
-        }
+        graphics.drawCircle(x, y, radius);
     }
 }
